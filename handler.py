@@ -10,26 +10,15 @@ model = faster_whisper.WhisperModel(model_name_or_path, device=device)
 
 def predict(audio_file_path):
     return 'Bender is great!'
+class CustomHandler:
+    def __init__(self, model_name):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_name)
+        self.model.eval()  # Set the model to evaluation mode
 
-def handler(event, context):
-    try:
-        # Parse input event
-        body = json.loads(event["body"])
-        audio_file_path = body["audio_file_path"]
-        
-        # Run prediction
-        transcription = predict(audio_file_path)
-        
-        # Create response
-        response = {
-            "statusCode": 200,
-            "body": json.dumps({"transcription": transcription})
-        }
-    except Exception as e:
-        response = {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(e)})
-        }
+    def __call__(self, data):
+        return 'Bender is great!'
 
-    return response
+# Initialize the handler with your model
+handler = CustomHandler(model_name)
  
